@@ -150,14 +150,14 @@ function App() {
       </div>
       <div className="cart-summary">
         <h2>Cart Summary</h2>
-        <p>Total: ${totalAmount.toFixed(2)}</p>
+        <p>Subtotal: ${totalAmount.toFixed(2)}</p>
         <button className="menu-item-button" onClick={handleOrder}>Order</button>
         <button className="menu-item-button" onClick={clearCart}>Clear All</button>
       </div>
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup-content popup-centered">
-            <h2>Order Summary</h2>
+            <h2>Order Placed!</h2>
             <pre>{orderSummary}</pre>
             <button className="menu-item-button" onClick={closePopup}>Close</button>
           </div>

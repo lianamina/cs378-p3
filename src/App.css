@@ -71,7 +71,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
 .popup-content {
@@ -86,9 +85,6 @@
 .popup-content pre {
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
-  font-weight: 500;
-  color: #333;
   text-align: left;
-  white-space: pre-wrap;
 }
 
