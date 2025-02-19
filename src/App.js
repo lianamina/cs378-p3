@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './App.css';
 import MenuItem from './components/MenuItem';
 import MenuHeader from './components/MenuHeader';
@@ -81,6 +82,53 @@ const menuItems = [
 
 
 function App() {
+  const [cart, setCart] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [orderSummary, setOrderSummary] = useState('');
+
+  const addToCart = (id) => {
+    setCart((prevCart) => ({
+      ...prevCart,
+      [id]: (prevCart[id] || 0) + 1
+    }));
+  };
+
+  const removeFromCart = (id) => {
+    setCart((prevCart) => {
+      if (!prevCart[id]) return prevCart;
+      const updatedCart = { ...prevCart, [id]: prevCart[id] - 1 };
+      if (updatedCart[id] <= 0) delete updatedCart[id];
+      return updatedCart;
+    });
+  };
+
+  const clearCart = () => {
+    setCart({});
+  };
+
+  const handleOrder = () => {
+    if (Object.keys(cart).length === 0) {
+      setOrderSummary('No items in cart');
+    } else {
+      let summary = 'Order Summary:\n';
+      let total = 0;
+      Object.keys(cart).forEach((id) => {
+        const item = menuItems.find((item) => item.id === parseInt(id));
+        summary += `${item.title} x${cart[id]} - $${(cart[id] * item.price).toFixed(2)}\n`;
+        total += cart[id] * item.price;
+      });
+      summary += `Total: $${total.toFixed(2)}`;
+      setOrderSummary(summary);
+    }
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
+  const totalAmount = Object.keys(cart).reduce((sum, id) => sum + cart[id] * menuItems.find(item => item.id === parseInt(id)).price, 0);
+
   return (
     <div className="container menu-background">
       <MenuHeader
@@ -91,9 +139,30 @@ function App() {
       />
       <div className="row">
         {menuItems.map(item => (
-          <MenuItem key={item.id} {...item} />
+          <MenuItem 
+            key={item.id} 
+            {...item} 
+            count={cart[item.id] || 0} 
+            addToCart={() => addToCart(item.id)}
+            removeFromCart={() => removeFromCart(item.id)}
+          />
         ))}
       </div>
+      <div className="cart-summary">
+        <h2>Cart Summary</h2>
+        <p>Total: ${totalAmount.toFixed(2)}</p>
+        <button className="menu-item-button" onClick={handleOrder}>Order</button>
+        <button className="menu-item-button" onClick={clearCart}>Clear All</button>
+      </div>
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content popup-centered">
+            <h2>Order Summary</h2>
+            <pre>{orderSummary}</pre>
+            <button className="menu-item-button" onClick={closePopup}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
